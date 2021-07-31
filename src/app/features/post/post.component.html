@@ -1,0 +1,108 @@
+<!-- Main -->
+<div class="flex flex-col flex-auto min-w-0">
+  <app-header></app-header>
+
+  <div class="flex flex-auto justify-center w-full max-w-5xl mx-auto p-6 sm:p-8">
+    <!-- Column -->
+    <div class="flex flex-col items-start w-full">
+      <!-- Create Post -->
+      <div class="flex flex-col w-full p-6 sm:p-8 pb-6 rounded-md shadow-md">
+        <div class="text-xl font-semibold">Create Post</div>
+        <div class="flex flex-col sm:flex-row items-start mt-8">
+          <div
+            class="
+              flex
+              items-center
+              justify-center
+              w-14
+              h-14
+              rounded-full
+              overflow-hidden
+              uppercase
+              text-3xl
+              mr-4
+              font-bold
+              leading-none
+              bg-secondary-100
+              text-gray-600
+              dark:bg-gray-700 dark:text-gray-200
+            "
+          >
+            {{ user.name | initials }}
+          </div>
+          <mat-form-field class="w-full">
+            <textarea
+              matInput
+              [placeholder]="'What\'s on your mind?'"
+              [rows]="3"
+              matTextareaAutosize
+              [(ngModel)]="postDetails"
+            ></textarea>
+          </mat-form-field>
+        </div>
+        <div class="flex items-center justify-end mt-6 sm:mt-8 -mx-3">
+          <button class="px-10 ml-8" mat-flat-button [color]="'primary'" (click)="post()">
+            <span class="text-primary-50">Post</span>
+          </button>
+        </div>
+      </div>
+
+      <app-card class="flex flex-col max-w-140 w-full mt-8 rounded-md shadow-md" *ngFor="let post of posts">
+        <div class="flex items-center mx-6 sm:mx-8 mt-6 mb-1">
+          <div
+            class="
+              flex
+              items-center
+              justify-center
+              w-14
+              h-14
+              rounded-full
+              overflow-hidden
+              uppercase
+              text-3xl
+              mr-4
+              font-bold
+              leading-none
+              bg-secondary-100
+              text-gray-600
+              dark:bg-gray-700 dark:text-gray-200
+            "
+          >
+            {{ user.name | initials }}
+          </div>
+
+          <div class="flex flex-col">
+            <span class="text-md font-semibold leading-none">{{ post.user.name }}</span>
+            <span class="text-sm text-secondary leading-none mt-1">{{ post.createdAt | dateAgo }}</span>
+          </div>
+          <!-- <button class="ml-auto -mr-4" mat-icon-button [matMenuTriggerFor]="postCardMenu08">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:dots-vertical'"></mat-icon>
+                    </button>
+                    <mat-menu #postCardMenu08="matMenu">
+                        <button mat-menu-item>
+                            <span class="flex items-center">
+                                <mat-icon class="icon-size-5 mr-3" [svgIcon]="'heroicons_solid:save'"></mat-icon>
+                                <span>Edit</span>
+                            </span>
+                        </button>
+                        <button mat-menu-item>
+                            <span class="flex items-center">
+                                <mat-icon class="icon-size-5 mr-3" [svgIcon]="'heroicons_solid:eye-off'"></mat-icon>
+                                <span>Delete</span>
+                            </span>
+                        </button>
+                    </mat-menu> -->
+        </div>
+        <div class="m-6 sm:mx-8 whitespace-pre-line leading-relaxed">
+          {{ post.details }}
+        </div>
+        <div class="flex items-center mx-3 sm:mx-5 mb-4">
+          <button class="px-3 mr-1" mat-button [routerLink]="[post._id]">
+            <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_solid:chat-alt'"></mat-icon>
+            <span>Comments</span>
+          </button>
+        </div>
+      </app-card>
+    </div>
+  </div>
+</div>

@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from '@core/guards/auth.guard';
+import { NoAuthGuard } from '@core/guards/noAuth.guard';
 import { AppComponent } from './app.component';
 
 const routes: Routes = [
@@ -16,24 +18,22 @@ const routes: Routes = [
   // Auth routes for guests
   {
     path: '',
-    // canActivate: [NoAuthGuard],
-    // canActivateChild: [NoAuthGuard],
+    canActivate: [NoAuthGuard],
+    canActivateChild: [NoAuthGuard],
     component: AppComponent,
     children: [
-      // { path: 'sign-in', loadChildren: () => import('app/modules/auth/sign-in/sign-in.module').then(m => m.AuthSignInModule) },
-      // { path: 'sign-up', loadChildren: () => import('app/modules/auth/sign-up/sign-up.module').then(m => m.AuthSignUpModule) }
+      { path: 'sign-in', loadChildren: () => import('./features/sign-in/sign-in.module').then((m) => m.SignInModule) },
+      { path: 'sign-up', loadChildren: () => import('./features/sign-up/sign-up.module').then((m) => m.SignUpModule) },
     ],
   },
 
   // Admin routes
   {
     path: '',
-    // canActivate: [AuthGuard],
-    // canActivateChild: [AuthGuard],
+    canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard],
     component: AppComponent,
-    children: [
-      { path: 'home', loadChildren: () => import('./features/example/example.module').then((m) => m.ExampleModule) },
-    ],
+    children: [{ path: 'home', loadChildren: () => import('./features/post/post.module').then((m) => m.PostModule) }],
   },
 ];
 

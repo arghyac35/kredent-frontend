@@ -1,60 +1,70 @@
-import { AuthToken, UserDetail } from '@core/models/auth.model';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-
-import { CONSTANTS } from './constants';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { map } from 'rxjs/operators';
+
+import { UserService } from '@core/services';
+import { Observable } from 'rxjs';
+import { User } from '@core/models';
+import { environment } from '@env';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private headers = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
+  constructor(private router: Router, private http: HttpClient, private _userService: UserService) {}
 
-  constructor(private _http: HttpClient) {}
-
-  login(userdetails: UserDetail) {
-    const body = new HttpParams()
-      .set(CONSTANTS.USERNAME, userdetails.username)
-      .set(CONSTANTS.PASSWORD, userdetails.password);
-
-    return this._http.post<AuthToken>('<login_URL>', body.toString(), {
-      headers: this.headers,
-    });
+  public get jwtToken(): string {
+    return this._userService.userSubjectValue?.token;
   }
 
-  logout() {
-    const body = new HttpParams().set(CONSTANTS.REFRESH_TOKEN, this.getRefreshToken()!);
-    this._http.post('<logout_URL>', body.toString(), { headers: this.headers }).subscribe({
-      next: () => window.location.reload(),
-      complete: () => {
-        localStorage.clear();
-      },
-      error: () => {
-        localStorage.clear();
-        window.location.reload();
-      },
-    });
+  signIn(credentials: { email: string; password: string }) {
+    return this.http.post<any>(`${environment.apiurl}auth/signin`, credentials, { withCredentials: true }).pipe(
+      map((user) => {
+        this._userService.user = user;
+        this.startRefreshTokenTimer();
+        return user;
+      })
+    );
   }
 
-  isLoggedIn() {
-    return this.getToken() ? true : false; // add your strong logic
+  signUp(userForm: any): Observable<{ user: User; message: string }> {
+    if (userForm.hasOwnProperty('passwordConfirm')) {
+      // Remove the passwordConfirm field
+      delete userForm.passwordConfirm;
+    }
+    return this.http.post<{ user: User; message: string }>(`${environment.apiurl}auth/signup`, userForm);
   }
 
-  storeToken(token: AuthToken) {
-    localStorage.setItem('token', token.access_token);
-    localStorage.setItem(CONSTANTS.REFRESH_TOKEN, token.refresh_token);
-  }
-
-  getToken() {
-    return localStorage.getItem('token');
+  signOut() {
+    this.http.post<any>(`${environment.apiurl}auth/revokeToken`, {}).subscribe();
+    this.stopRefreshTokenTimer();
+    this._userService.user = null;
   }
 
   refreshToken() {
-    const body = new HttpParams().set(CONSTANTS.REFRESH_TOKEN, this.getRefreshToken()!);
-    return this._http.post<AuthToken>('<refresh_token_url>', body.toString(), {
-      headers: this.headers,
-    });
+    return this.http.post<any>(`${environment.apiurl}auth/refreshToken`, {}, { withCredentials: true }).pipe(
+      map((user) => {
+        this._userService.user = user;
+        this.startRefreshTokenTimer();
+        return user;
+      })
+    );
   }
 
-  getRefreshToken() {
-    return localStorage.getItem(CONSTANTS.REFRESH_TOKEN);
+  // helper methods
+
+  private refreshTokenTimeout;
+
+  private startRefreshTokenTimer() {
+    // parse json object from base64 encoded jwt token
+    const jwtToken = JSON.parse(atob(this.jwtToken.split('.')[1]));
+
+    // set a timeout to refresh the token a minute before it expires
+    const expires = new Date(jwtToken.exp * 1000);
+    const timeout = expires.getTime() - Date.now() - 60 * 1000;
+    this.refreshTokenTimeout = setTimeout(() => this.refreshToken().subscribe(), timeout);
+  }
+
+  private stopRefreshTokenTimer() {
+    clearTimeout(this.refreshTokenTimeout);
   }
 }

@@ -1,0 +1,123 @@
+<div class="flex flex-col flex-auto min-w-0 bg-card">
+  <app-header></app-header>
+
+  <!-- Main -->
+  <div class="flex-auto p-6 sm:p-10 w-full max-w-screen-xl mx-auto">
+    <!-- Card #65 -->
+    <app-card class="flex flex-col shadow-md">
+      <div class="flex items-center mx-6 sm:mx-8 mt-6 mb-1">
+        <div
+          class="
+            flex
+            items-center
+            justify-center
+            w-14
+            h-14
+            rounded-full
+            overflow-hidden
+            uppercase
+            text-3xl
+            mr-4
+            font-bold
+            leading-none
+            bg-secondary-100
+            text-gray-600
+            dark:bg-gray-700 dark:text-gray-200
+          "
+        >
+          {{ post.user.name | initials }}
+        </div>
+        <div class="flex flex-col">
+          <span class="font-semibold leading-none">{{ post.user.name }}</span>
+          <span class="text-sm text-secondary leading-none mt-1">{{ post.createdAt | dateAgo }}</span>
+        </div>
+      </div>
+
+      <div class="flex m-6 sm:mx-8 whitespace-pre-line leading-relaxed">
+        {{ post.details }}
+      </div>
+    </app-card>
+
+    <div class="flex flex-col mx-4 sm:mx-8 mt-6 mb-3">
+      <div class="flex items-start">
+        <div
+          class="
+            flex
+            items-center
+            justify-center
+            w-14
+            h-14
+            rounded-full
+            overflow-hidden
+            uppercase
+            text-3xl
+            mr-4
+            font-bold
+            leading-none
+            bg-secondary-100
+            text-gray-600
+            dark:bg-gray-700 dark:text-gray-200
+          "
+        >
+          {{ user.name | initials }}
+        </div>
+        <mat-form-field class="w-full">
+          <textarea
+            matInput
+            [placeholder]="'Write a comment...'"
+            [rows]="3"
+            matTextareaAutosize
+            [(ngModel)]="comment"
+          ></textarea>
+        </mat-form-field>
+      </div>
+      <div class="flex items-center mt-3 ml-auto">
+        <button mat-flat-button [color]="'primary'" (click)="onCommentPost()" [disabled]="isLoading" class="h-10">
+          <span class="ml-2 mr-1 text-primary-50" *ngIf="!isLoading">Comment</span>
+          <span class="flex items-center justify-center">
+            <mat-progress-spinner *ngIf="isLoading" [diameter]="24" [mode]="'indeterminate'"> </mat-progress-spinner>
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <hr class="border-b mx-4 sm:mx-8 my-6" />
+    <div class="relative flex flex-col mx-4 sm:mx-8">
+      <div class="flex items-start" *ngFor="let item of commentList; let i = index" [ngClass]="{ 'mt-8': i >= 1 }">
+        <div
+          class="
+            flex
+            items-center
+            justify-center
+            w-14
+            h-14
+            rounded-full
+            overflow-hidden
+            uppercase
+            text-3xl
+            mr-4
+            font-bold
+            leading-none
+            bg-secondary-100
+            text-gray-600
+            dark:bg-gray-700 dark:text-gray-200
+          "
+        >
+          {{ item.user.name | initials }}
+        </div>
+        <div class="flex flex-col mt-0.5 whitespace-pre-line leading-relaxed">
+          <div class="flex flex-row">
+            <span class="font-bold mr-3">{{ item.user.name }}</span>
+            <p>
+              {{ item.comment }}
+            </p>
+          </div>
+          <div class="flex items-center text-sm text-secondary mt-2">
+            <span class="mr-2">&bull;</span>
+            <span>{{ item.createdAt | dateAgo }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

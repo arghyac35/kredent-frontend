@@ -1,0 +1,13 @@
+<div class="flex overflow-hidden">
+  <mat-toolbar class="flex flex-row w-full justify-between">
+    <div class="flex">My App</div>
+
+    <div class="flex justify-end items-end m-5">
+      <span class="mr-3">Logged in as: {{ user.name }} </span>
+      <button mat-raised-button color="primary" (click)="logout()">
+        <mat-icon class="text-primary-50">logout</mat-icon>
+        <span class="text-primary-50 ml-2">Logout</span>
+      </button>
+    </div>
+  </mat-toolbar>
+</div>

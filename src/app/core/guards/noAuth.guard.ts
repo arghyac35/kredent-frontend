@@ -10,13 +10,13 @@ import {
   UrlSegment,
   UrlTree,
 } from '@angular/router';
-import { UserService } from '@core/services';
 import { Observable } from 'rxjs';
+import { UserService } from '@core/services';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
+export class NoAuthGuard implements CanActivate, CanActivateChild, CanLoad {
   /**
    * Constructor
    */
@@ -29,16 +29,15 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
   /**
    * Check the authenticated status
    *
-   * @param redirectURL
    * @private
    */
-  private _check(redirectURL: string): boolean {
+  private _check(): boolean {
     const user = this._userService.userObj;
 
-    // If the user is not authenticated...
-    if (!user) {
-      // Redirect to the sign-in page
-      this._router.navigate(['sign-in'], { queryParams: { redirectURL } });
+    // If the user is authenticated...
+    if (user) {
+      // Redirect to the root
+      this._router.navigate(['signed-in-redirect']);
 
       // Prevent the access
       return false;
@@ -62,8 +61,7 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean> | Promise<boolean> | boolean {
-    const redirectUrl = state.url === '/sign-out' ? '/' : state.url;
-    return this._check(redirectUrl);
+    return this._check();
   }
 
   /**
@@ -76,8 +74,7 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
     childRoute: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    const redirectUrl = state.url === '/sign-out' ? '/' : state.url;
-    return this._check(redirectUrl);
+    return this._check();
   }
 
   /**
@@ -87,6 +84,6 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
    * @param segments
    */
   canLoad(route: Route, segments: UrlSegment[]): Observable<boolean> | Promise<boolean> | boolean {
-    return this._check('/');
+    return this._check();
   }
 }
