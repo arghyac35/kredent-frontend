@@ -41,8 +41,11 @@
           </mat-form-field>
         </div>
         <div class="flex items-center justify-end mt-6 sm:mt-8 -mx-3">
-          <button class="px-10 ml-8" mat-flat-button [color]="'primary'" (click)="post()">
-            <span class="text-primary-50">Post</span>
+          <button class="px-10 ml-8 h-10" mat-flat-button [color]="'primary'" (click)="post()" [disabled]="isLoading">
+            <span class="ml-2 mr-1 text-primary-50" *ngIf="!isLoading">Post</span>
+            <span class="flex items-center justify-center">
+              <mat-progress-spinner *ngIf="isLoading" [diameter]="24" [mode]="'indeterminate'"> </mat-progress-spinner>
+            </span>
           </button>
         </div>
       </div>

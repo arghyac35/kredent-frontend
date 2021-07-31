@@ -21,6 +21,7 @@ export class PostComponent implements OnInit, OnDestroy {
   postDetails: string = '';
   posts: any[] = [];
   user: User;
+  isLoading: boolean = false;
 
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -46,13 +47,16 @@ export class PostComponent implements OnInit, OnDestroy {
       this._customSnackbarService.open('Please enter something', 'error', 'Ok');
       return;
     }
+    this.isLoading = true;
     this._postService.createPost({ details: this.postDetails }).subscribe(
       (response) => {
         this._customSnackbarService.open(response.message, 'info', 'Ok');
         this.postDetails = '';
+        this.isLoading = false;
         this._changeDetectorRef.detectChanges();
       },
       (err) => {
+        this.isLoading = false;
         this._customSnackbarService.open(err, 'error', 'Ok');
       }
     );
