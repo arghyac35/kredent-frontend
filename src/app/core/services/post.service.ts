@@ -30,9 +30,7 @@ export class PostService {
   }
 
   createPost(data: any): Observable<any> {
-    // return this._httpClient.post<any>(environment.apiurl + 'post/add', data);
-
-    return this.post$.pipe(
+    return this.posts$.pipe(
       take(1),
       switchMap((posts) =>
         this._httpClient.post<{ message: string; post: any }>(environment.apiurl + 'post/add', data).pipe(
