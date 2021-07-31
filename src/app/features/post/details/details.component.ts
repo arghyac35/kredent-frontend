@@ -82,9 +82,11 @@ export class DetailsComponent implements OnInit {
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((data) => {
         console.log('FETCH_COMMENTS event called-->', data);
-        if (this.handleCustomSocketErr(data)) {
-          this.commentList = data.comments;
-          this._changeDetectorRef.detectChanges();
+        if (data && data.postID === this.post._id) {
+          if (this.handleCustomSocketErr(data)) {
+            this.commentList = data.comments;
+            this._changeDetectorRef.detectChanges();
+          }
         }
       });
 
