@@ -52,3 +52,5 @@ Thumbs.db
 # Cypress artefacts
 cypress/videos/**
 cypress/screenshots/**
+
+/.firebase

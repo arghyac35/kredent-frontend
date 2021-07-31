@@ -1,0 +1,15 @@
+
+{
+  "targets": {
+    "feed-97a3a": {
+      "hosting": {
+        "test": [
+          "feed-97a3a"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "test": "feed-97a3a"
+  }
+}
